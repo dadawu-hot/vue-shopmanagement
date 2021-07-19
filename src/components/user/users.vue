@@ -40,7 +40,7 @@
                 <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEdieDialog(scope.row.id)"></el-button>
                 <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeUserById(scope.row.id)"></el-button>
                 <el-tooltip   content="分配角色" placement="top" effect="dark" :enterable="false">
-                    <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+                    <el-button type="warning" icon="el-icon-setting" size="mini" @click="setUserRoles(scope.row)"></el-button>
                 </el-tooltip>
           </template>
         </el-table-column>
@@ -104,6 +104,32 @@
             <el-button type="primary" @click="editUser">确 定</el-button>
         </span>
     </el-dialog>
+    <!-- 分配角色的对话框 -->
+    <el-dialog
+        title="分配角色"
+        :visible.sync="setUserRolesDialogVisible"
+        width="50%"  
+        @close="restInfo">
+        <!-- 内容主体区 -->
+        <div ref="reloInfoRef">
+            <p>当前用户：{{userinfo.username}}</p>
+             <p>当前角色：{{userinfo.role_name}}</p>
+             <p>分配新角色
+                 <el-select v-model="selectId" placeholder="请选择">
+                    <el-option
+                    v-for="item in rolelist"
+                    :key="item.id"
+                    :label="item.roleName"
+                    :value="item.id">
+                    </el-option>
+                 </el-select>
+             </p>
+        </div>
+         <span slot="footer" class="dialog-footer">
+            <el-button @click="setUserRolesDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="saveRoleInfo">确定</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -164,6 +190,8 @@ export default {
               {validator:checkMobile}
           ]
       },
+        
+     
       // 控制修改用户弹框
       editDialogVisible:false,
       // 根据id查询的用户信息对象
@@ -178,7 +206,13 @@ export default {
               { required: true, message: '请输入邮箱', trigger: 'blur' },
               {validator:checkMobile}
           ]
-      }
+      },
+      // 分配角色对话框
+      setUserRolesDialogVisible:false,
+      userinfo :{},
+    //   所有角色列表
+      rolelist:[],
+      selectId:""
     };
   },
   created() {
@@ -290,6 +324,37 @@ export default {
             this.$message.success("删除用户成功");
             this.getUserList();
         }
+    },
+    // 管理角色对话框
+    async setUserRoles(rowinfo){
+        this.userinfo = rowinfo;
+        // 在展示对话框之前获取所有角色列表，放在下拉列表框里
+        const {data:res} = await this.$http.get('roles')
+        if(res.meta.status!==200){
+            return this.$message.error('获取角色列表失败')
+        }
+        this.rolelist = res.data
+        console.log(this.rolelist)
+        this.setUserRolesDialogVisible = true;
+    },
+    // 保存提交修改的角色
+    async saveRoleInfo(){
+        if(!this.selectId){
+            return this.$message.error('请选择要分配的角色')
+        }
+        const {data:res} = await this.$http.put(`users/${this.userinfo.id}/role`,{rid:this.selectId})
+        if(res.meta.status!==200){
+            return this.$message.error('修改角色失败')
+        }
+        this.$message.success('修改角色成功')
+        this.getUserList()
+        this.setUserRolesDialogVisible = false
+
+    },
+    // 监听关闭对话框的重置事件
+    restInfo(){
+        this.selectId = '';
+        this.userinfo = {}
     }
   },
 };
