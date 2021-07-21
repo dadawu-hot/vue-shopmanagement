@@ -6,7 +6,10 @@ import './plugins/element.js'
 import './assets/css/global.css'
 // 导入字体图标样式表
 import './assets/fonts/iconfont.css'
+// 导入依赖
 import axios from 'axios'
+// 导入TreeTable插件
+import TreeTable from 'vue-table-with-tree-grid'
 
 //组件绑定，挂载原型属性
 //配置请求路径
@@ -21,6 +24,9 @@ Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
 
+// 全局注册为可用组件
+
+Vue.component('tree-table',TreeTable)
 new Vue({
   router,
   render: h => h(App)
