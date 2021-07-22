@@ -7,6 +7,7 @@ import Users from '../components/user/users'
 import Rights from '../components/power/rights'
 import Roles from '../components/power/roles'
 import Cates from '../components/goods/cates'
+import Params from '../components/goods/params'
 
 // import { component } from 'vue/types/umd'
 
@@ -25,6 +26,7 @@ const routes = [
     {path:'/rights', component: Rights},
     {path:'/roles', component: Roles},
     {path:'/categories', component: Cates},
+    {path:'/params', component: Params},
 
   ]
   },
