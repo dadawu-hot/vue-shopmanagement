@@ -8,6 +8,8 @@ import Rights from '../components/power/rights'
 import Roles from '../components/power/roles'
 import Cates from '../components/goods/cates'
 import Params from '../components/goods/params'
+import List from '../components/goods/list'
+import Add from '../components/goods/add'
 
 // import { component } from 'vue/types/umd'
 
@@ -27,6 +29,8 @@ const routes = [
     {path:'/roles', component: Roles},
     {path:'/categories', component: Cates},
     {path:'/params', component: Params},
+    {path:'/goods',component: List},
+    {path:'/goods/add',component: Add}
 
   ]
   },
